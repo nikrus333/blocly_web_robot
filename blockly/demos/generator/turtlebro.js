@@ -128,6 +128,9 @@ Blockly.JavaScript['turtlebro_movetodistance'] = function(block) {
   var dropdown_moveatthisspeed = block.getFieldValue('moveatthisspeed');
   var number_movetothisdistance = block.getFieldValue('movetothisdistance');
   // TODO: Assemble JavaScript into code variable.
-  var code = '...;\n';
+  var code = `
+  goal_movetodistance.send()
+  console.log('goal sent');`
   return code;
 };
+
