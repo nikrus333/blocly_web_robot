@@ -2,14 +2,44 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Blockly Demo: Generating JavaScript</title>
+  <title>TurtleBro_Blockly: ROS Action server via blockly</title>
   <script src="../google-blockly/blockly_compressed.js"></script>
   <script src="../google-blockly/blocks_compressed.js"></script>
   <script src="../google-blockly/javascript_compressed.js"></script>
   <script src="../google-blockly/msg/js/en.js"></script>
-
   <script src="turtlebro.js"></script>
-  <script src="boot.js"></script>
+  <script src="boot2.js"></script>
+  
+
+  <script>
+    Blockly.Blocks['turtlebro_movetodistance'] = {
+  init: function() {
+    this.appendDummyInput()
+        .appendField(Blockly.Msg["REDO"])
+    this.appendDummyInput()
+        .appendField("%{BKY_ADD_COMMENT}")
+        .appendField(new Blockly.FieldTextInput("1"), "movetothisistance")
+        .appendField("Speed ")
+        .appendField(new Blockly.FieldDropdown([["Fast", "0.6"], ["Normal", "0.4"], ["Slow", "0.2"]]), "moveatthispeed")
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.setColour(120);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.turtlebro.ru');
+  }
+};
+
+
+Blockly.JavaScript['turtlebro_movetodistance'] = function(block) {
+  var dropdown_moveatthisspeed = block.getFieldValue('moveatthisspeed');
+  var number_movetothisdistance = block.getFieldValue('movetothisdistance');
+  // TODO: Assemble JavaScript into code variable.
+  var code = `
+  goal_movetodistance.send()
+  console.log('goal sent');`
+  return code;
+};
+  </script>
 
   <script type="text/javascript" src="http://static.robotwebtools.org/EventEmitter2/current/eventemitter2.js"></script> 
   <script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
@@ -39,7 +69,7 @@
 <body>
   <p><a href="http://www.volbro.ru"><img src="img/voltbro-logo.png" 
     width="200" height="57" alt="VoltBro"></a></p>
-  <p>This is <a href="http://www.turtlebro.ru">TurtleBro</a> Action Service Blockly implementation</p>
+  <p>This is <a href="http://www.turtlebro.ru">TurtleBro</a> Action Service Blockly implementation </p>
 
   <td class="farSide">
     <select id="languageMenu"></select>
@@ -59,7 +89,7 @@
 <div id="blocklyDiv" style="position: absolute"></div>
 
   <xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display: none">  
-    <category name="TurtleBro" colour=blue>
+    <category name="%{BKY_CATTURTLEBRO}" colour=blue>
       <block type="turtlebro_movetodistance">
         <field name="moveatthispeed">0.4</field>
         <field name="movetothisistance">0.01</field>
@@ -378,7 +408,7 @@
   <script>
     var blocklyArea = document.getElementById('blocklyArea');
     var blocklyDiv = document.getElementById('blocklyDiv');
-
+ 
     for (var messageKey in MSG) {
     if (messageKey.indexOf('cat') == 0) {
       Blockly.Msg[messageKey.toUpperCase()] = MSG[messageKey];

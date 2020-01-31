@@ -202,6 +202,9 @@ Tb_blockly_actionserver.changeCodingLanguage = function() {
  * @param {!Element|string} el Button element or ID thereof.
  * @param {!Function} func Event handler to bind.
  */
+//ВЕРНУТЬ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+/*
 Tb_blockly_actionserver.bindClick = function(el, func) {
   if (typeof el == 'string') {
     el = document.getElementById(el);
@@ -209,6 +212,8 @@ Tb_blockly_actionserver.bindClick = function(el, func) {
   el.addEventListener('click', func, true);
   el.addEventListener('touchend', func, true);
 };
+*/
+
 
 /**
  * Load the Prettify CSS and JavaScript.
@@ -253,7 +258,10 @@ Tb_blockly_actionserver.getBBox_ = function(element) {
  * User's language (e.g. "en").
  * @type {string}
  */
+
+
 Tb_blockly_actionserver.LANG = Tb_blockly_actionserver.getLang();
+
 
 /**
  * List of tab names.
@@ -406,6 +414,7 @@ Tb_blockly_actionserver.attemptCodeGeneration = function(generator) {
  * Check whether all blocks in use have generator functions.
  * @param generator {!Blockly.Generator} The generator to use.
  */
+/*
 Tb_blockly_actionserver.checkAllGeneratorFunctionsDefined = function(generator) {
   var blocks = Tb_blockly_actionserver.workspace.getAllBlocks(false);
   var missingBlockGenerators = [];
@@ -418,6 +427,8 @@ Tb_blockly_actionserver.checkAllGeneratorFunctionsDefined = function(generator) 
     }
   }
 
+
+
   var valid = missingBlockGenerators.length == 0;
   if (!valid) {
     var msg = 'The generator code for the following blocks not specified for ' +
@@ -427,16 +438,27 @@ Tb_blockly_actionserver.checkAllGeneratorFunctionsDefined = function(generator) 
   return valid;
 };
 
+*/
+
+
 /**
  * Initialize Blockly.  Called on page load.
  */
 Tb_blockly_actionserver.init = function() {
   Tb_blockly_actionserver.initLanguage();
 
+  /*
+  
   var rtl = Tb_blockly_actionserver.isRtl();
-  var container = document.getElementById('content_area');
-  var onresize = function(e) {
+  var container = document.getElementById('blocklyArea');
+
+  */
+  
+  //var onresize = function(e) {
+    /*
     var bBox = Tb_blockly_actionserver.getBBox_(container);
+    */
+    /*
     for (var i = 0; i < Tb_blockly_actionserver.TABS_.length; i++) {
       var el = document.getElementById('content_' + Tb_blockly_actionserver.TABS_[i]);
       el.style.top = bBox.y + 'px';
@@ -448,14 +470,17 @@ Tb_blockly_actionserver.init = function() {
       el.style.width = bBox.width + 'px';
       el.style.width = (2 * bBox.width - el.offsetWidth) + 'px';
     }
+    */
     // Make the 'Blocks' tab line up with the toolbox.
+    /*
     if (Tb_blockly_actionserver.workspace && Tb_blockly_actionserver.workspace.getToolbox().width) {
       document.getElementById('tab_blocks').style.minWidth =
           (Tb_blockly_actionserver.workspace.getToolbox().width - 38) + 'px';
           // Account for the 19 pixel margin and on each side.
     }
-  };
-  window.addEventListener('resize', onresize, false);
+    */
+   //};
+  //window.addEventListener('resize', onresize, false);
 
   
 
@@ -503,20 +528,25 @@ Tb_blockly_actionserver.init = function() {
 
   Tb_blockly_actionserver.loadBlocks('');
 
+  /*
   if ('BlocklyStorage' in window) {
     // Hook a save function onto unload.
     BlocklyStorage.backupOnUnload(Tb_blockly_actionserver.workspace);
   }
 
   Tb_blockly_actionserver.tabClick(Tb_blockly_actionserver.selected);
-
+*/
+  /*
   Tb_blockly_actionserver.bindClick('trashButton',
       function() {Tb_blockly_actionserver.discard(); Tb_blockly_actionserver.renderContent();});
   Tb_blockly_actionserver.bindClick('runButton', Tb_blockly_actionserver.runJS);
 
+  */
 
+/*
   onresize();
   Blockly.svgResize(Tb_blockly_actionserver.workspace);
+  */
 
   // Lazy-load the syntax-highlighting.
   window.setTimeout(Tb_blockly_actionserver.importPrettify, 1);
@@ -578,6 +608,7 @@ Tb_blockly_actionserver.initLanguage = function() {
   document.getElementById('linkButton').title = MSG['linkTooltip'];
   document.getElementById('runButton').title = MSG['runTooltip'];
   document.getElementById('trashButton').title = MSG['trashTooltip'];
+  
 };
 
 
@@ -604,5 +635,6 @@ Tb_blockly_actionserver.discard = function() {
 document.write('<script src="msg/' + Tb_blockly_actionserver.LANG + '.js"></script>\n');
 // Load Blockly's language strings.
 document.write('<script src="../google-blockly/msg/js/' + Tb_blockly_actionserver.LANG + '.js"></script>\n');
+
 
 window.addEventListener('load', Tb_blockly_actionserver.init);
