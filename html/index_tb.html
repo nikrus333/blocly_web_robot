@@ -7,19 +7,19 @@
   <script src="../google-blockly/blocks_compressed.js"></script>
   <script src="../google-blockly/javascript_compressed.js"></script>
   <script src="../google-blockly/msg/js/en.js"></script>
-  <script src="turtlebro.js"></script>
   <script src="boot2.js"></script>
   
 
   <script>
     Blockly.Blocks['turtlebro_movetodistance'] = {
-  init: function() {
+    init: function() {
+      this.appendValueInput("moveatthisdistance")
+        .appendField(Blockly.Msg["TB_MTD_MOVE"])
+        .setCheck("Number")
     this.appendDummyInput()
-        .appendField(Blockly.Msg["REDO"])
+        .appendField(Blockly.Msg["TB_MTD_METERS"])
     this.appendDummyInput()
-        .appendField("%{BKY_ADD_COMMENT}")
-        .appendField(new Blockly.FieldTextInput("1"), "movetothisistance")
-        .appendField("Speed ")
+        .appendField(Blockly.Msg["TB_MTD_SPEED"])
         .appendField(new Blockly.FieldDropdown([["Fast", "0.6"], ["Normal", "0.4"], ["Slow", "0.2"]]), "moveatthispeed")
     this.setPreviousStatement(true);
     this.setNextStatement(true);
@@ -29,14 +29,30 @@
   }
 };
 
-
 Blockly.JavaScript['turtlebro_movetodistance'] = function(block) {
-  var dropdown_moveatthisspeed = block.getFieldValue('moveatthisspeed');
-  var number_movetothisdistance = block.getFieldValue('movetothisdistance');
-  // TODO: Assemble JavaScript into code variable.
-  var code = `
-  goal_movetodistance.send()
-  console.log('goal sent');`
+  var value_moveatthisspeed = block.getFieldValue('moveatthispeed');
+  var value_moveatthisdistance = Blockly.JavaScript.valueToCode(block, 'moveatthisdistance', Blockly.JavaScript.ORDER_ATOMIC);
+
+  var code = 
+    'var TurtleBro_actionsClient_movetodistance = new ROSLIB.ActionClient({\n'
+    + 'ros : ros,\n'
+    + 'serverName : "/movetodistance",\n'
+    + 'actionName : "/turtlebro_actions/movetodistanceAction"\n'
+    + '});\n'
+
+    + 'var goal_movetodistance = new ROSLIB.Goal({\n'
+    + 'actionClient : TurtleBro_actionsClient_movetodistance,\n'
+    + 'goalMessage : {\n'
+    + 'distance : ' + value_moveatthisdistance + ',\n'
+    + 'speed : ' + value_moveatthisspeed + '\n'
+    + '}\n'
+    + '});\n'
+    + 'goal_movetodistance.send()\n'
+    + 'console.log("goal sent");\n'
+    + 'var feedback = goal_movetodistance.on("feedback", function(feedback) {\n'
+    + 'console.log(feedback.distance_passed);\n'
+    +  '});\n'
+    + 'console.log(feedback);\n'
   return code;
 };
   </script>
@@ -92,7 +108,6 @@ Blockly.JavaScript['turtlebro_movetodistance'] = function(block) {
     <category name="%{BKY_CATTURTLEBRO}" colour=blue>
       <block type="turtlebro_movetodistance">
         <field name="moveatthispeed">0.4</field>
-        <field name="movetothisistance">0.01</field>
       </block>
     </category>  
     <category name="%{BKY_CATLOGIC}" colour="%{BKY_LOGIC_HUE}">
@@ -476,12 +491,15 @@ Blockly.JavaScript['turtlebro_movetodistance'] = function(block) {
         url : 'ws://localhost:9090'
     });
 
+    /*
     var TurtleBro_actionsClient_movetodistance = new ROSLIB.ActionClient({
     ros : ros,
     serverName : '/movetodistance',
     actionName : '/turtlebro_actions/movetodistanceAction'
   });
-      
+  */
+
+  /*
       var goal_movetodistance = new ROSLIB.Goal({
     actionClient : TurtleBro_actionsClient_movetodistance,
     goalMessage : {
@@ -489,6 +507,7 @@ Blockly.JavaScript['turtlebro_movetodistance'] = function(block) {
       speed : 0.5
     }
     });
+    */
 
       try {
         eval(code);

@@ -28,17 +28,15 @@
  * Common HSV hue for all blocks in this category.
  */
 
-<script src="../google-blockly/msg/js/ru.js"></script>
-
 
 Blockly.Blocks['turtlebro_movetodistance'] = {
   init: function() {
     this.appendDummyInput()
-        .appendField(Blockly.msg["REDO"])
+        .appendField(Blockly.msg["TB_MTD_MOVE"])
     this.appendDummyInput()
         .appendField("%{BKY_TB_MTD_MOVE}")
         .appendField(new Blockly.FieldTextInput("1"), "movetothisistance")
-        .appendField("Speed ")
+        .appendField("TB_MTD_SPEED")
         .appendField(new Blockly.FieldDropdown([["Fast", "0.6"], ["Normal", "0.4"], ["Slow", "0.2"]]), "moveatthispeed")
     this.setPreviousStatement(true);
     this.setNextStatement(true);
@@ -120,4 +118,7 @@ Blockly.JavaScript['turtlebro_movetodistance'] = function(block) {
   console.log('goal sent');`
   return code;
 };
+
+
+
 

@@ -422,7 +422,12 @@ Blockly.Msg["PROCEDURES_DEFRETURN_PROCEDURE"] = Blockly.Msg["PROCEDURES_DEFNORET
 Blockly.Msg["PROCEDURES_DEFRETURN_TITLE"] = Blockly.Msg["PROCEDURES_DEFNORETURN_TITLE"];
 Blockly.Msg["TEXT_APPEND_VARIABLE"] = Blockly.Msg["VARIABLES_DEFAULT_NAME"];
 Blockly.Msg["TEXT_CREATE_JOIN_ITEM_TITLE_ITEM"] = Blockly.Msg["VARIABLES_DEFAULT_NAME"];
-Blockly.Msg["TB_MTD_MOVE"] = "Двигайся";
+Blockly.Msg["TB_MTD_MOVE"] = "Двигайся:";
+Blockly.Msg["TB_MTD_LONG"] = "столько";
+Blockly.Msg["TB_MTD_METERS"] = "метров";
+Blockly.Msg["TB_MTD_SPEED"] = "Скорость";
+
+
 
 Blockly.Msg["MATH_HUE"] = "230";
 Blockly.Msg["LOOPS_HUE"] = "120";

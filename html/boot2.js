@@ -81,6 +81,8 @@ Tb_blockly_actionserver.LANGUAGE_NAME = {
  */
 Tb_blockly_actionserver.LANGUAGE_RTL = ['ar', 'fa', 'he', 'lki'];
 
+
+
 /**
  * Blockly's main workspace.
  * @type {Blockly.WorkspaceSvg}
@@ -229,10 +231,11 @@ Tb_blockly_actionserver.initLanguage = function() {
 
 
 
+
+
 // Load the TurtleBro_blockly's language strings.
 document.write('<script src="msg/' + Tb_blockly_actionserver.LANG + '.js"></script>\n');
 // Load Blockly's language strings.
 document.write('<script src="../google-blockly/msg/js/' + Tb_blockly_actionserver.LANG + '.js"></script>\n');
-
 
 window.addEventListener('load', Tb_blockly_actionserver.init);
