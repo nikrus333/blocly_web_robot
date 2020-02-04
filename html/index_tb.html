@@ -52,7 +52,9 @@ Blockly.JavaScript['turtlebro_movetodistance'] = function(block) {
     + 'var feedback = goal_movetodistance.on("feedback", function(feedback) {\n'
     + 'console.log(feedback.distance_passed);\n'
     +  '});\n'
-    + 'console.log(feedback);\n'
+    + 'var result = goal_movetodistance.on("status", function(status) {\n'
+    + 'console.log(status);\n'
+    +  '});\n'
   return code;
 };
   </script>
