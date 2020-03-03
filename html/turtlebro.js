@@ -34,7 +34,6 @@ Blockly.Blocks['turtlebro_movetodistance'] = {
     this.appendDummyInput()
         .appendField(Blockly.msg["TB_MTD_MOVE"])
     this.appendDummyInput()
-        .appendField("%{BKY_TB_MTD_MOVE}")
         .appendField(new Blockly.FieldTextInput("1"), "movetothisistance")
         .appendField("TB_MTD_SPEED")
         .appendField(new Blockly.FieldDropdown([["Fast", "0.6"], ["Normal", "0.4"], ["Slow", "0.2"]]), "moveatthispeed")

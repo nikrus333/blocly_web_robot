@@ -2,66 +2,139 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="google" value="notranslate">
-  <title>Blockly Demo:</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="/storage.js"></script>
+  <title>TurtleBro_Blockly: ROS Action server via blockly</title>
   <script src="../google-blockly/blockly_compressed.js"></script>
   <script src="../google-blockly/blocks_compressed.js"></script>
   <script src="../google-blockly/javascript_compressed.js"></script>
+  <script src="../google-blockly/msg/js/en.js"></script>
+  <script src="boot2.js"></script>
+  
 
-  <script src="msg/en.js"></script>
-  <script src="tb_blockly.js"></script>
+  <script>
+    Blockly.Blocks['turtlebro_movetodistance'] = {
+    init: function() {
+      this.appendValueInput("movetothisdistance")
+        .appendField(Blockly.Msg["TB_MTD_MOVE"])
+        .setCheck("Number")
+    this.appendDummyInput()
+        .appendField(Blockly.Msg["TB_MTD_METERS"])
+    this.appendDummyInput()
+        .appendField(Blockly.Msg["TB_MTD_SPEED"])
+        .appendField(new Blockly.FieldDropdown([["Fast", "0.6"], ["Normal", "0.4"], ["Slow", "0.2"]]), "moveatthispeed")
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.setColour(120);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.turtlebro.ru');
+  }
+};
+
+var speed_goals = [];
+var distance_goals = [];
+
+Blockly.JavaScript['turtlebro_movetodistance'] = function(block) {
+  if (block.getSurroundParent() != null)
+  {
+    let block_parent = block.getSurroundParent();
+    let parent_block_cycle_times = Blockly.JavaScript.valueToCode(block_parent, 'TIMES', Blockly.JavaScript.ORDER_ATOMIC);
+    for (let i = 0; i < parent_block_cycle_times; i++) {
+      speed_goals.push(block.getFieldValue('moveatthispeed'));
+      distance_goals.push(Blockly.JavaScript.valueToCode(block, 'movetothisdistance', Blockly.JavaScript.ORDER_NONE));
+    }
+  }
+  else
+  {
+    speed_goals.push(block.getFieldValue('moveatthispeed'))
+    distance_goals.push(Blockly.JavaScript.valueToCode(block, 'movetothisdistance', Blockly.JavaScript.ORDER_NONE));
+    console.log(distance_goals);
+  }
+  
+  var code = 
+    'function block_move_to_distance() {\n'
+    + 'let func_number = global_func_counter;\n'
+    + 'global_func_counter = global_func_counter + 1;\n'
+    + 'function queue_checker() {\n'
+    + 'if (execute_blocker == 0 && curent_func_to_execute == func_number) {\n'
+    + 'let goal_movetodistance = new ROSLIB.Goal({\n'
+    + 'actionClient : TurtleBro_actionsClient_movetodistance,\n'
+    + 'goalMessage : {\n'
+    + 'distance : parseFloat(distance_goals[func_number]),\n'
+    + 'speed : parseFloat(speed_goals[func_number])\n'
+    + '}\n'
+    + '});\n'
+    + 'console.log(distance_goals);\n'
+    + 'goal_movetodistance.send();\n'
+    + 'console.log("goal sent");\n'
+    + 'goal_movetodistance.on("result", function(result) {\n'
+    + 'execute_blocker = 0;\n'
+    + 'curent_func_to_execute = func_number + 1;\n'
+    + 'console.log(result.done);\n'
+    + '});\n'
+    + '}\n'
+    + 'else {\n'
+    + 'setTimeout(queue_checker, 100);\n'
+    + '}}\n'
+    + 'queue_checker()\n'
+    + '}\n'
+    + 'block_move_to_distance()\n'
+  return code;
+
+};
+  </script>
+
+  <script type="text/javascript" src="http://static.robotwebtools.org/EventEmitter2/current/eventemitter2.js"></script> 
+  <script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+
+  <style>
+    html, body {
+      height: 90%;
+      margin: 0;
+    }
+    body {
+      background-color: #fff;
+      font-family: sans-serif;
+    }
+    h1 {
+      font-weight: normal;
+      font-size: 140%;
+    }
+    table {
+      height: 100%;
+      width: 100%;
+    }
+    #blocklyArea {
+      height: 99%;
+    }
+  </style>
 </head>
 <body>
-  <table width="100%" height="100%">
-    <tr>
-      <td>
-        <h1><a href="https://developers.google.com/blockly/">Blockly</a>&rlm; &gt;
-          <a href="../index.html">Demos</a>&rlm; &gt;
-          <span id="title">...</span>
-        </h1>
-      </td>
-      <td class="farSide">
-        <select id="languageMenu"></select>
-      </td>
-    </tr>
-    <tr>
-      <td colspan=2>
-        <table width="100%">
-          <tr id="tabRow" height="1em">
-            <td id="tab_blocks" class="tabon">...</td>
-            <td class="tabmin tab_collapse">&nbsp;</td>
-            <td id="tab_code" class="taboff">
-            <select id="code_menu"></select>
-            </td>
-            <td class="tabmax">
-              <button id="trashButton" class="notext" title="...">
-                <img src='../google-blockly/media/1x1.gif' class="trash icon21">
-              </button>
-              <button id="linkButton" class="notext" title="...">
-                <img src='../google-blockly/media/1x1.gif' class="link icon21">
-              </button>
-              <button id="runButton" class="notext primary" title="...">
-                <img src='../google-blockly/media/1x1.gif' class="run icon21">
-              </button>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td height="99%" colspan=2 id="content_area">
-      </td>
-    </tr>
-  </table>
-  <div id="content_blocks" class="content"></div>
-  <pre id="content_javascript" class="content prettyprint lang-js"></pre>
+  <p><a href="http://www.volbro.ru"><img src="img/voltbro-logo.png" 
+    width="200" height="57" alt="VoltBro"></a></p>
+  <p>This is <a href="http://www.turtlebro.ru">TurtleBro</a> Action Service Blockly implementation </p>
 
-  <textarea id="content_xml" class="content" wrap="off"></textarea>
+  <td class="farSide">
+    <select id="languageMenu"></select>
+  </td>
 
-  <xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display: none">
+  <p>
+    <button onclick="showCode()">Show Code</button>
+    <button onclick="runCode()">Run TurtleBro</button>
+  </p>
+ <table>
+  <tr>
+    <td id="blocklyArea">
+    </td>
+  </tr>
+</table>
+
+<div id="blocklyDiv" style="position: absolute"></div>
+
+  <xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" style="display: none">  
+    <category name="%{BKY_CATTURTLEBRO}" colour=blue>
+      <block type="turtlebro_movetodistance">
+        <field name="moveatthispeed">0.4</field>
+      </block>
+    </category>  
     <category name="%{BKY_CATLOGIC}" colour="%{BKY_LOGIC_HUE}">
       <block type="controls_if"></block>
       <block type="logic_compare"></block>
@@ -370,7 +443,98 @@
     <sep></sep>
     <category name="%{BKY_CATVARIABLES}" colour="%{BKY_VARIABLES_HUE}" custom="VARIABLE"></category>
     <category name="%{BKY_CATFUNCTIONS}" colour="%{BKY_PROCEDURES_HUE}" custom="PROCEDURE"></category>
-  </xml>
+  </xml> 
 
+  <script>
+    var blocklyArea = document.getElementById('blocklyArea');
+    var blocklyDiv = document.getElementById('blocklyDiv');
+ 
+    for (var messageKey in MSG) {
+    if (messageKey.indexOf('cat') == 0) {
+      Blockly.Msg[messageKey.toUpperCase()] = MSG[messageKey];
+      }
+    }
+      // Construct the toolbox XML, replacing translated variable names.
+    var toolboxText = document.getElementById('toolbox').outerHTML;
+    toolboxText = toolboxText.replace(/(^|[^%]){(\w+)}/g,
+        function(m, p1, p2) {return p1 + MSG[p2];});
+    var toolboxXml = Blockly.Xml.textToDom(toolboxText);
+
+
+    var demoWorkspace = Blockly.inject(blocklyDiv, 
+        {grid:
+          {spacing: 25,
+           length: 3,
+           colour: '#ccc',
+           snap: true},
+        media: '../google-blockly/media/',
+        toolbox: document.getElementById('toolbox'),
+        zoom:
+           {controls: true,
+            wheel: true}      
+        });
+    
+    var onresize = function(e) {
+      // Compute the absolute coordinates and dimensions of blocklyArea.
+      var element = blocklyArea;
+      var x = 0;
+      var y = 0;
+      do {
+        x += element.offsetLeft;
+        y += element.offsetTop;
+        element = element.offsetParent;
+      } while (element);
+      // Position blocklyDiv over blocklyArea.
+      blocklyDiv.style.left = x + 'px';
+      blocklyDiv.style.top = y + 'px';
+      blocklyDiv.style.width = blocklyArea.offsetWidth + 'px';
+      blocklyDiv.style.height = blocklyArea.offsetHeight + 'px';
+      Blockly.svgResize(demoWorkspace);
+    };
+    window.addEventListener('resize', onresize, false);
+    onresize();
+    Blockly.svgResize(demoWorkspace);
+
+    var ros = new ROSLIB.Ros({
+        url : 'ws://localhost:9090'
+    });
+
+    var TurtleBro_actionsClient_movetodistance = new ROSLIB.ActionClient({
+    ros : ros,
+    serverName : '/movetodistance',
+    actionName : '/turtlebro_actions/movetodistanceAction'
+    });
+
+    function showCode() {
+      // Generate JavaScript code and display it.
+      speed_goals = [];
+      distance_goals = [];
+      Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
+      var code = Blockly.JavaScript.workspaceToCode(demoWorkspace);
+      alert(code);
+    }
+
+    function runCode() {
+      // Generate JavaScript code and run it.
+      speed_goals = [];
+      distance_goals = [];
+      window.LoopTrap = 1000;
+      Blockly.JavaScript.INFINITE_LOOP_TRAP =
+          'if (--window.LoopTrap == 0) throw "Infinite loop.";\n';
+      var code = Blockly.JavaScript.workspaceToCode(demoWorkspace);
+      Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
+
+      var global_func_counter = 0;
+      var execute_blocker = 0;
+      var curent_func_to_execute = 0;
+
+      try {
+        eval(code);
+      } catch (e) {
+        alert(e);
+      }
+    }
+
+  </script>
 </body>
 </html>
