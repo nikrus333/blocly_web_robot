@@ -81,6 +81,8 @@ Tb_blockly_actionserver.LANGUAGE_NAME = {
  */
 Tb_blockly_actionserver.LANGUAGE_RTL = ['ar', 'fa', 'he', 'lki'];
 
+
+
 /**
  * Blockly's main workspace.
  * @type {Blockly.WorkspaceSvg}
@@ -94,6 +96,7 @@ Tb_blockly_actionserver.workspace = null;
  * @param {string} defaultValue Value to return if parameter not found.
  * @return {string} The parameter value or the default value if not found.
  */
+
 Tb_blockly_actionserver.getStringParamFromUrl = function(name, defaultValue) {
   var val = location.search.match(new RegExp('[?&]' + name + '=([^&]+)'));
   return val ? decodeURIComponent(val[1].replace(/\+/g, '%20')) : defaultValue;
@@ -121,39 +124,7 @@ Tb_blockly_actionserver.isRtl = function() {
   return Tb_blockly_actionserver.LANGUAGE_RTL.indexOf(Tb_blockly_actionserver.LANG) != -1;
 };
 
-/**
- * Load blocks saved on App Engine Storage or in session/local storage.
- * @param {string} defaultXml Text representation of default blocks.
- */
-//ОСТАВИТЬ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-/*
-Tb_blockly_actionserver.loadBlocks = function(defaultXml) {
-  try {
-    var loadOnce = window.sessionStorage.loadOnceBlocks;
-  } catch(e) {
-    // Firefox sometimes throws a SecurityError when accessing sessionStorage.
-    // Restarting Firefox fixes this, so it looks like a bug.
-    var loadOnce = null;
-  }
-  if ('BlocklyStorage' in window && window.location.hash.length > 1) {
-    // An href with #key trigers an AJAX call to retrieve saved blocks.
-    BlocklyStorage.retrieveXml(window.location.hash.substring(1));
-  } else if (loadOnce) {
-    // Language switching stores the blocks during the reload.
-    delete window.sessionStorage.loadOnceBlocks;
-    var xml = Blockly.Xml.textToDom(loadOnce);
-    Blockly.Xml.domToWorkspace(xml, Tb_blockly_actionserver.workspace);
-  } else if (defaultXml) {
-    // Load the editor with default starting blocks.
-    var xml = Blockly.Xml.textToDom(defaultXml);
-    Blockly.Xml.domToWorkspace(xml, Tb_blockly_actionserver.workspace);
-  } else if ('BlocklyStorage' in window) {
-    // Restore saved blocks in a separate thread so that subsequent
-    // initialization is not affected from a failed load.
-    window.setTimeout(BlocklyStorage.restoreBlocks, 0);
-  }
-};
-*/
+
 
 /**
  * Save the blocks and reload with a different language.
@@ -161,13 +132,6 @@ Tb_blockly_actionserver.loadBlocks = function(defaultXml) {
 Tb_blockly_actionserver.changeLanguage = function() {
   // Store the blocks for the duration of the reload.
   // MSIE 11 does not support sessionStorage on file:// URLs.
-  /*
-  if (window.sessionStorage) {
-    var xml = Blockly.Xml.workspaceToDom(Tb_blockly_actionserver.workspace);
-    var text = Blockly.Xml.domToText(xml);
-    window.sessionStorage.loadOnceBlocks = text;
-  }
-  */
 
   var languageMenu = document.getElementById('languageMenu');
   var newLang = encodeURIComponent(
@@ -185,74 +149,6 @@ Tb_blockly_actionserver.changeLanguage = function() {
       window.location.host + window.location.pathname + search;
 };
 
-/**
- * Changes the output language by clicking the tab matching
- * the selected language in the codeMenu.
- */
-/*
-Tb_blockly_actionserver.changeCodingLanguage = function() {
-  var codeMenu = document.getElementById('code_menu');
-  Tb_blockly_actionserver.tabClick(codeMenu.options[codeMenu.selectedIndex].value);
-}
-*/
-
-/**
- * Bind a function to a button's click event.
- * On touch enabled browsers, ontouchend is treated as equivalent to onclick.
- * @param {!Element|string} el Button element or ID thereof.
- * @param {!Function} func Event handler to bind.
- */
-//ВЕРНУТЬ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-/*
-Tb_blockly_actionserver.bindClick = function(el, func) {
-  if (typeof el == 'string') {
-    el = document.getElementById(el);
-  }
-  el.addEventListener('click', func, true);
-  el.addEventListener('touchend', func, true);
-};
-*/
-
-
-/**
- * Load the Prettify CSS and JavaScript.
- */
-/*
-Tb_blockly_actionserver.importPrettify = function() {
-  var script = document.createElement('script');
-  script.setAttribute('src', 'https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js');
-  document.head.appendChild(script);
-};
-*/
-
-/**
- * Compute the absolute coordinates and dimensions of an HTML element.
- * @param {!Element} element Element to match.
- * @return {!Object} Contains height, width, x, and y properties.
- * @private
- */
-
- /*
-Tb_blockly_actionserver.getBBox_ = function(element) {
-  var height = element.offsetHeight;
-  var width = element.offsetWidth;
-  var x = 0;
-  var y = 0;
-  do {
-    x += element.offsetLeft;
-    y += element.offsetTop;
-    element = element.offsetParent;
-  } while (element);
-  return {
-    height: height,
-    width: width,
-    x: x,
-    y: y
-  };
-};
-
-*/
 
 /**
  * User's language (e.g. "en").
@@ -263,182 +159,6 @@ Tb_blockly_actionserver.getBBox_ = function(element) {
 Tb_blockly_actionserver.LANG = Tb_blockly_actionserver.getLang();
 
 
-/**
- * List of tab names.
- * @private
- */
-/*
-Tb_blockly_actionserver.TABS_ = ['blocks', /* 'javascript', 'php', 'python', 'dart', 'lua', 'xml'];*/
-
-
-/**
- * List of tab names with casing, for display in the UI.
- * @private
- */
-/*
-Tb_blockly_actionserver.TABS_DISPLAY_ = [
-  'Blocks', /* 'JavaScript' , 'PHP', 'Python', 'Dart', 'Lua', 'XML',
-];
-*/
-
-/*
-Tb_blockly_actionserver.selected = 'blocks';
-*/
-
-
-/**
- * Switch the visible pane when a tab is clicked.
- * @param {string} clickedName Name of tab clicked.
- */
-//Tb_blockly_actionserver.tabClick = function(clickedName) {
-  // If the XML tab was open, save and render the content.
-  /*
-  if (document.getElementById('tab_xml').classList.contains('tabon')) {
-    var xmlTextarea = document.getElementById('content_xml');
-    var xmlText = xmlTextarea.value;
-    var xmlDom = null;
-    try {
-      xmlDom = Blockly.Xml.textToDom(xmlText);
-    } catch (e) {
-      var q =
-          window.confirm(MSG['badXml'].replace('%1', e));
-      if (!q) {
-        // Leave the user on the XML tab.
-        return;
-      }
-    }
-    if (xmlDom) {
-      Tb_blockly_actionserver.workspace.clear();
-      Blockly.Xml.domToWorkspace(xmlDom, Tb_blockly_actionserver.workspace);
-    }
-  }
-
-  if (document.getElementById('tab_blocks').classList.contains('tabon')) {
-    Tb_blockly_actionserver.workspace.setVisible(false);
-  }
-  */
-  // Deselect all tabs and hide all panes.
-  /*
-  for (var i = 0; i < Tb_blockly_actionserver.TABS_.length; i++) {
-    var name = Tb_blockly_actionserver.TABS_[i];
-    var tab = document.getElementById('tab_' + name);
-    tab.classList.add('taboff');
-    tab.classList.remove('tabon');
-    document.getElementById('content_' + name).style.visibility = 'hidden';
-  }
-*/
-  // Select the active tab.
-  /*
-  Tb_blockly_actionserver.selected = clickedName;
-  var selectedTab = document.getElementById('tab_' + clickedName);
-  selectedTab.classList.remove('taboff');
-  selectedTab.classList.add('tabon');
-  */
-  // Show the selected pane.
-  /*
-  document.getElementById('content_' + clickedName).style.visibility =
-      'visible';
-  Tb_blockly_actionserver.renderContent();
-  */
-  // The code menu tab is on if the blocks tab is off.
-  /*
-  var codeMenuTab = document.getElementById('tab_code');
-  if (clickedName == 'blocks') {
-    Tb_blockly_actionserver.workspace.setVisible(true);
-    codeMenuTab.className = 'taboff';
-  } else {
-    codeMenuTab.className = 'tabon';
-  }
-  */
-  // Sync the menu's value with the clicked tab value if needed.
-  /*
-  var codeMenu = document.getElementById('code_menu');
-  for (var i = 0; i < codeMenu.options.length; i++) {
-    if (codeMenu.options[i].value == clickedName) {
-      codeMenu.selectedIndex = i;
-      break;
-    }
-  }
-  Blockly.svgResize(Tb_blockly_actionserver.workspace);
-};
-*/
-
-
-/**
- * Populate the currently selected pane with content generated from the blocks.
- */
-/*
-Code.renderContent = function() {
-  var content = document.getElementById('content_' + Code.selected);
-  // Initialize the pane.
-  if (content.id == 'content_xml') {
-    var xmlTextarea = document.getElementById('content_xml');
-    var xmlDom = Blockly.Xml.workspaceToDom(Code.workspace);
-    var xmlText = Blockly.Xml.domToPrettyText(xmlDom);
-    xmlTextarea.value = xmlText;
-    xmlTextarea.focus();
-  } else if (content.id == 'content_javascript') {
-    Code.attemptCodeGeneration(Blockly.JavaScript);
-  } else if (content.id == 'content_python') {
-    Code.attemptCodeGeneration(Blockly.Python);
-  } else if (content.id == 'content_php') {
-    Code.attemptCodeGeneration(Blockly.PHP);
-  } else if (content.id == 'content_dart') {
-    Code.attemptCodeGeneration(Blockly.Dart);
-  } else if (content.id == 'content_lua') {
-    Code.attemptCodeGeneration(Blockly.Lua);
-  }
-  if (typeof PR == 'object') {
-    PR.prettyPrint();
-  }
-};*/
-
-/**
- * Attempt to generate the code and display it in the UI, pretty printed.
- * @param generator {!Blockly.Generator} The generator to use.
- */
-/*
-Tb_blockly_actionserver.attemptCodeGeneration = function(generator) {
-  var content = document.getElementById('content_' + Tb_blockly_actionserver.selected);
-  content.textContent = '';
-  if (Tb_blockly_actionserver.checkAllGeneratorFunctionsDefined(generator)) {
-    var code = generator.workspaceToCode(Tb_blockly_actionserver.workspace);
-    content.textContent = code;
-    // Remove the 'prettyprinted' class, so that Prettify will recalculate.
-    content.className = content.className.replace('prettyprinted', '');
-  }
-};
-*/
-
-/**
- * Check whether all blocks in use have generator functions.
- * @param generator {!Blockly.Generator} The generator to use.
- */
-/*
-Tb_blockly_actionserver.checkAllGeneratorFunctionsDefined = function(generator) {
-  var blocks = Tb_blockly_actionserver.workspace.getAllBlocks(false);
-  var missingBlockGenerators = [];
-  for (var i = 0; i < blocks.length; i++) {
-    var blockType = blocks[i].type;
-    if (!generator[blockType]) {
-      if (missingBlockGenerators.indexOf(blockType) == -1) {
-        missingBlockGenerators.push(blockType);
-      }
-    }
-  }
-
-
-
-  var valid = missingBlockGenerators.length == 0;
-  if (!valid) {
-    var msg = 'The generator code for the following blocks not specified for ' +
-        generator.name_ + ':\n - ' + missingBlockGenerators.join('\n - ');
-    Blockly.alert(msg);  // Assuming synchronous. No callback.
-  }
-  return valid;
-};
-
-*/
 
 
 /**
@@ -446,107 +166,13 @@ Tb_blockly_actionserver.checkAllGeneratorFunctionsDefined = function(generator) 
  */
 Tb_blockly_actionserver.init = function() {
   Tb_blockly_actionserver.initLanguage();
-
-  /*
-  
-  var rtl = Tb_blockly_actionserver.isRtl();
-  var container = document.getElementById('blocklyArea');
-
-  */
-  
-  //var onresize = function(e) {
-    /*
-    var bBox = Tb_blockly_actionserver.getBBox_(container);
-    */
-    /*
-    for (var i = 0; i < Tb_blockly_actionserver.TABS_.length; i++) {
-      var el = document.getElementById('content_' + Tb_blockly_actionserver.TABS_[i]);
-      el.style.top = bBox.y + 'px';
-      el.style.left = bBox.x + 'px';
-      // Height and width need to be set, read back, then set again to
-      // compensate for scrollbars.
-      el.style.height = bBox.height + 'px';
-      el.style.height = (2 * bBox.height - el.offsetHeight) + 'px';
-      el.style.width = bBox.width + 'px';
-      el.style.width = (2 * bBox.width - el.offsetWidth) + 'px';
-    }
-    */
-    // Make the 'Blocks' tab line up with the toolbox.
-    /*
-    if (Tb_blockly_actionserver.workspace && Tb_blockly_actionserver.workspace.getToolbox().width) {
-      document.getElementById('tab_blocks').style.minWidth =
-          (Tb_blockly_actionserver.workspace.getToolbox().width - 38) + 'px';
-          // Account for the 19 pixel margin and on each side.
-    }
-    */
-   //};
-  //window.addEventListener('resize', onresize, false);
-
-  
-
-  // The toolbox XML specifies each category name using Blockly's messaging
-  // format (eg. `<category name="%{BKY_CATLOGIC}">`).
-  // These message keys need to be defined in `Blockly.Msg` in order to
-  // be decoded by the library. Therefore, we'll use the `MSG` dictionary that's
-  // been defined for each language to import each category name message
-  // into `Blockly.Msg`.
-  // TODO: Clean up the message files so this is done explicitly instead of
-  // through this for-loop.
-  for (var messageKey in MSG) {
-    if (messageKey.indexOf('cat') == 0) {
-      Blockly.Msg[messageKey.toUpperCase()] = MSG[messageKey];
-    }
-  }
-
-  /*
-  // Construct the toolbox XML, replacing translated variable names.
-  var toolboxText = document.getElementById('toolbox').outerHTML;
-  toolboxText = toolboxText.replace(/(^|[^%]){(\w+)}/g,
-      function(m, p1, p2) {return p1 + MSG[p2];});
-  var toolboxXml = Blockly.Xml.textToDom(toolboxText);
-
-  var blocklyDiv = document.getElementById('blocklyDiv');
-
-  Code.workspace = Blockly.inject(blocklyDiv,
-      {grid:
-          {spacing: 25,
-           length: 3,
-           colour: '#ccc',
-           snap: true},
-       media: '../google-blockly/media/',
-       rtl: rtl,
-       toolbox: toolboxXml,
-       zoom:
-           {controls: true,
-            wheel: true}
-      });
-*/
   // Add to reserved word list: Local variables in execution environment (runJS)
   // and the infinite loop detection function.
 
   Blockly.JavaScript.addReservedWords('code,timeouts,checkTimeout');
-
-  Tb_blockly_actionserver.loadBlocks('');
-
-  /*
-  if ('BlocklyStorage' in window) {
-    // Hook a save function onto unload.
-    BlocklyStorage.backupOnUnload(Tb_blockly_actionserver.workspace);
-  }
-
-  Tb_blockly_actionserver.tabClick(Tb_blockly_actionserver.selected);
-*/
-  /*
-  Tb_blockly_actionserver.bindClick('trashButton',
-      function() {Tb_blockly_actionserver.discard(); Tb_blockly_actionserver.renderContent();});
-  Tb_blockly_actionserver.bindClick('runButton', Tb_blockly_actionserver.runJS);
-
-  */
-
 /*
-  onresize();
-  Blockly.svgResize(Tb_blockly_actionserver.workspace);
-  */
+  Tb_blockly_actionserver.loadBlocks('');
+*/
 
   // Lazy-load the syntax-highlighting.
   window.setTimeout(Tb_blockly_actionserver.importPrettify, 1);
@@ -589,18 +215,9 @@ Tb_blockly_actionserver.initLanguage = function() {
   }
   languageMenu.addEventListener('change', Tb_blockly_actionserver.changeLanguage, true);
 
-  
-  // Populate the coding language selection menu.
-  /*
-  var codeMenu = document.getElementById('code_menu');
-  codeMenu.options.length = 0;
-  for (var i = 1; i < Tb_blockly_actionserver.TABS_.length; i++) {
-    codeMenu.options.add(new Option(Tb_blockly_actionserver.TABS_DISPLAY_[i], Tb_blockly_actionserver.TABS_[i]));
-  }
-  codeMenu.addEventListener('change', Tb_blockly_actionserver.changeCodingLanguage);
-*/
+  // TODO multilanguage buttons names
   // Inject language strings.
-  
+  /*
   document.title += ' ' + MSG['title'];
   document.getElementById('title').textContent = MSG['title'];
   document.getElementById('tab_blocks').textContent = MSG['blocks'];
@@ -608,33 +225,14 @@ Tb_blockly_actionserver.initLanguage = function() {
   document.getElementById('linkButton').title = MSG['linkTooltip'];
   document.getElementById('runButton').title = MSG['runTooltip'];
   document.getElementById('trashButton').title = MSG['trashTooltip'];
+  */
   
 };
 
 
-
-/**
- * Discard all blocks from the workspace.
- */
-
-/*
-Tb_blockly_actionserver.discard = function() {
-  var count = Tb_blockly_actionserver.workspace.getAllBlocks(false).length;
-  if (count < 2 ||
-      window.confirm(Blockly.Msg['DELETE_ALL_BLOCKS'].replace('%1', count))) {
-    Tb_blockly_actionserver.workspace.clear();
-    if (window.location.hash) {
-      window.location.hash = '';
-    }
-  }
-};
-
-*/
-
-// Load the Code demo's language strings.
+// Load the TurtleBro_blockly's language strings.
 document.write('<script src="msg/' + Tb_blockly_actionserver.LANG + '.js"></script>\n');
 // Load Blockly's language strings.
 document.write('<script src="../google-blockly/msg/js/' + Tb_blockly_actionserver.LANG + '.js"></script>\n');
-
 
 window.addEventListener('load', Tb_blockly_actionserver.init);

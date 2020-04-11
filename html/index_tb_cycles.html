@@ -7,7 +7,7 @@
   <script src="../google-blockly/blocks_compressed.js"></script>
   <script src="../google-blockly/javascript_compressed.js"></script>
   <script src="../google-blockly/msg/js/en.js"></script>
-  <script src="boot2.js"></script>
+  <script src="boot.js"></script>
   
 
   <script>
@@ -31,15 +31,27 @@
 
 var speed_goals = [];
 var distance_goals = [];
+var speed_goals_in_cycle = [];
+var distance_goals_in_cycle = [];
 
 Blockly.JavaScript['turtlebro_movetodistance'] = function(block) {
   if (block.getSurroundParent() != null)
   {
-    let block_parent = block.getSurroundParent();
+    speed_goals_in_cycle.push(block.getFieldValue('moveatthispeed'));
+    distance_goals_in_cycle.push(Blockly.JavaScript.valueToCode(block, 'movetothisdistance', Blockly.JavaScript.ORDER_NONE));  
+    
+    if (block.getNextBlock() == null)
+    {
+    let block_parent = block.getSurroundParent(); //TODO make cycle to get all surronding parents not only one
     let parent_block_cycle_times = Blockly.JavaScript.valueToCode(block_parent, 'TIMES', Blockly.JavaScript.ORDER_ATOMIC);
-    for (let i = 0; i < parent_block_cycle_times; i++) {
-      speed_goals.push(block.getFieldValue('moveatthispeed'));
-      distance_goals.push(Blockly.JavaScript.valueToCode(block, 'movetothisdistance', Blockly.JavaScript.ORDER_NONE));
+    for (let i = 0; i < parent_block_cycle_times; i++) 
+     {
+      for (let j=0; j < speed_goals_in_cycle.length ; j++)
+       {
+       speed_goals.push(speed_goals_in_cycle[j]);
+       distance_goals.push(distance_goals_in_cycle[j]);
+       }
+     }
     }
   }
   else
@@ -77,6 +89,83 @@ Blockly.JavaScript['turtlebro_movetodistance'] = function(block) {
     + 'queue_checker()\n'
     + '}\n'
     + 'block_move_to_distance()\n'
+  return code;
+
+};
+  </script>
+
+  <script>
+    Blockly.Blocks['turtlebro_turntoangle'] = {
+    init: function() {
+      this.appendValueInput("turntothisangle")
+        .appendField(Blockly.Msg["TB_TTA_TURN"])
+        .setCheck("Number")
+    this.appendDummyInput()
+        .appendField(Blockly.Msg["TB_TTA_ANGLES"])
+    this.appendDummyInput()
+        .appendField(Blockly.Msg["TB_TTA_ROTATESPEED"])
+        .appendField(new Blockly.FieldDropdown([["Fast", "0.6"], ["Normal", "0.4"], ["Slow", "0.2"]]), "turnatthispeed")
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.setColour(120);
+    this.setTooltip('');
+    this.setHelpUrl('http://www.turtlebro.ru');
+  }
+};
+
+var speed_goals = [];
+var distance_goals = [];
+
+Blockly.JavaScript['turtlebro_turntoangle'] = function(block) {
+  if (block.getSurroundParent() != null)
+  {
+    if (block.getNextBlock() != null)
+    {
+
+
+    }
+    let block_parent = block.getSurroundParent(); //TODO make cycle to get all surronding parents not only one
+    let parent_block_cycle_times = Blockly.JavaScript.valueToCode(block_parent, 'TIMES', Blockly.JavaScript.ORDER_ATOMIC);
+    for (let i = 0; i < parent_block_cycle_times; i++) {
+      speed_goals.push(block.getFieldValue('turnatthispeed'));
+      distance_goals.push(Blockly.JavaScript.valueToCode(block, 'turntothisangle', Blockly.JavaScript.ORDER_NONE));
+    }
+  }
+  else
+  {
+    speed_goals.push(block.getFieldValue('turnatthispeed'))
+    distance_goals.push(Blockly.JavaScript.valueToCode(block, 'turntothisangle', Blockly.JavaScript.ORDER_NONE));
+    console.log(distance_goals);
+  }
+  
+  var code = 
+    'function block_turn_to_angle() {\n'
+    + 'let func_number = global_func_counter;\n'
+    + 'global_func_counter = global_func_counter + 1;\n'
+    + 'function queue_checker() {\n'
+    + 'if (execute_blocker == 0 && curent_func_to_execute == func_number) {\n'
+    + 'let goal_movetodistance = new ROSLIB.Goal({\n'
+    + 'actionClient : TurtleBro_actionsClient_movetodistance,\n'
+    + 'goalMessage : {\n'
+    + 'distance : parseFloat(distance_goals[func_number]),\n'
+    + 'speed : parseFloat(speed_goals[func_number])\n'
+    + '}\n'
+    + '});\n'
+    + 'console.log(distance_goals);\n'
+    + 'goal_movetodistance.send();\n'
+    + 'console.log("goal sent");\n'
+    + 'goal_movetodistance.on("result", function(result) {\n'
+    + 'execute_blocker = 0;\n'
+    + 'curent_func_to_execute = func_number + 1;\n'
+    + 'console.log(result.done);\n'
+    + '});\n'
+    + '}\n'
+    + 'else {\n'
+    + 'setTimeout(queue_checker, 100);\n'
+    + '}}\n'
+    + 'queue_checker()\n'
+    + '}\n'
+    + 'block_turn_to_angle()\n'
   return code;
 
 };
@@ -133,6 +222,9 @@ Blockly.JavaScript['turtlebro_movetodistance'] = function(block) {
     <category name="%{BKY_CATTURTLEBRO}" colour=blue>
       <block type="turtlebro_movetodistance">
         <field name="moveatthispeed">0.4</field>
+      </block>
+      <block type="turtlebro_turntoangle">
+        <field name="turnatthispeed">0.4</field>
       </block>
     </category>  
     <category name="%{BKY_CATLOGIC}" colour="%{BKY_LOGIC_HUE}">
@@ -509,6 +601,8 @@ Blockly.JavaScript['turtlebro_movetodistance'] = function(block) {
       // Generate JavaScript code and display it.
       speed_goals = [];
       distance_goals = [];
+      speed_goals_in_cycle = [];
+      distance_goals_in_cycle = [];
       Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
       var code = Blockly.JavaScript.workspaceToCode(demoWorkspace);
       alert(code);
@@ -518,6 +612,8 @@ Blockly.JavaScript['turtlebro_movetodistance'] = function(block) {
       // Generate JavaScript code and run it.
       speed_goals = [];
       distance_goals = [];
+      speed_goals_in_cycle = [];
+      distance_goals_in_cycle = [];
       window.LoopTrap = 1000;
       Blockly.JavaScript.INFINITE_LOOP_TRAP =
           'if (--window.LoopTrap == 0) throw "Infinite loop.";\n';

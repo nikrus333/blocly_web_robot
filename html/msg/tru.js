@@ -28,7 +28,3 @@ Blockly.Msg["TB_MTD_MOVE"] = "Двигайся:"; // to set block fields name he
 Blockly.Msg["TB_MTD_LONG"] = "столько";
 Blockly.Msg["TB_MTD_METERS"] = "метров";
 Blockly.Msg["TB_MTD_SPEED"] = "Скорость";
-Blockly.Msg["TB_TTA_TURN"] = "Поворачивайся на:"; // to set block fields name here
-Blockly.Msg["TB_MTD_LONG"] = "столько";
-Blockly.Msg["TB_TTA_ANGLES"] = "градусов";
-Blockly.Msg["TB_TTA_ROTATESPEED"] = "Скорость";
