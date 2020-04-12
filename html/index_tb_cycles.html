@@ -39,11 +39,11 @@ Blockly.JavaScript['turtlebro_movetodistance'] = function(block) {
   {
     speed_goals_in_cycle.push(block.getFieldValue('moveatthispeed'));
     distance_goals_in_cycle.push(Blockly.JavaScript.valueToCode(block, 'movetothisdistance', Blockly.JavaScript.ORDER_NONE));  
-    
-    if (block.getNextBlock() == null)
-    {
-    let block_parent = block.getSurroundParent(); //TODO make cycle to get all surronding parents not only one
-    let parent_block_cycle_times = Blockly.JavaScript.valueToCode(block_parent, 'TIMES', Blockly.JavaScript.ORDER_ATOMIC);
+
+    if (block.getNextBlock() == null) //TODO should be reworked in case not TB blocks at the end of cycle
+    { 
+    //TODO make cycle to get all surronding parents not only one
+    let parent_block_cycle_times = Blockly.JavaScript.valueToCode(block.getSurroundParent(), 'TIMES', Blockly.JavaScript.ORDER_ATOMIC);
     for (let i = 0; i < parent_block_cycle_times; i++) 
      {
       for (let j=0; j < speed_goals_in_cycle.length ; j++)
@@ -52,6 +52,9 @@ Blockly.JavaScript['turtlebro_movetodistance'] = function(block) {
        distance_goals.push(distance_goals_in_cycle[j]);
        }
      }
+     //flush cycles arrays for new cycle if it will occurs
+     speed_goals_in_cycle = [];
+     distance_goals_in_cycle = [];
     }
   }
   else
